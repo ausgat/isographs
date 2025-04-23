@@ -17,10 +17,10 @@ function createSimulation(graphs) {
 
     const svg = d3.select("div#chart")
         .append("svg")
-            .attr("width", width)
-            .attr("height", height)
-            .attr("viewBox", [-width / 2, -height / 2, width, height])
-            .attr("style", "max-width: 100%; height: auto;");
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .attr("preserveAspectRatio", "xMinYMin meet")
+            .attr("viewBox", [-width / 2, -height / 2, width, height]);
 
     const link = svg.append("g")
             .attr("stroke", "#999")
