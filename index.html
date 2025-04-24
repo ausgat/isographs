@@ -10,7 +10,24 @@
   </head>
   <body>
     <div class="wrapper">
-      <div id="sidebar" class="panel"></div>
+      <div id="sidebar" class="panel">
+        <div id="graphform1" class="subpanel">
+          <label for="graphverts1">Graph 1 Vertices:</label>
+          <input type="text" name="graphverts1" id="graphverts1">
+          <label for="graphedges1">Graph 1 Edges:</label>
+          <input type="text" name="graphedges1" id="graphedges1">
+          <label for="graphverts2">Graph 2 Vertices:</label>
+          <input type="text" name="graphverts2" id="graphverts1">
+          <label for="graphedges2">Graph 2 Edges:</label>
+          <input type="text" name="graphedges2" id="graphedges2">
+          <button>Generate</button>
+        </div>
+        <div id="graphtests" class="subpanel">
+          <button>Check Simple</button>
+          <button>Check Counts</button>
+          <button>Check Isomorphic</button>
+        </div>
+      </div>
       <div id="chart"></div>
       <div id="console" class="panel"></div>
     </div>

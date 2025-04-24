@@ -13,7 +13,7 @@ p {
 
 .wrapper {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 300px 1fr;
   grid-template-rows: 1fr 200px;
   width: 100%;
   height: 100%;
@@ -23,6 +23,47 @@ p {
   background-color: #eee;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border: 1px solid #aaa;
+  border-radius: 4px;
+  margin: 8px;
+  padding: 10px;
+}
+
+.panel button {
+  color: #fff;
+  font-size: 1em;
+  width: 100%;
+  height: 30px;
+  margin: 5px 0;
+  background-color: hsl(222, 68%, 45%);
+  border: none;
+  border-radius: 15px;
+}
+
+.panel button:hover {
+  background-color: hsl(222, 75%, 56%);
+}
+
+.panel button:active {
+  background-color: hsl(222, 73%, 33%);
+}
+
+.panel input[type=text] {
+  font-size: 1em;
+  width: 100%;
+  height: 30px;
+  background-color: #fff;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  margin: 5px 0;
+}
+
+.panel label {
+  font-size: 0.8em;
+  color: #555;
+}
+
+.subpanel {
+  background-color: #ddd;
   border-radius: 4px;
   margin: 8px;
   padding: 10px;
