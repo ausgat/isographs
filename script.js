@@ -1,6 +1,12 @@
 const width = 600;
 const height = 400;
 
+function println(str) {
+    const msg = document.createElement("p");
+    msg.innerHTML = str;
+    document.getElementById("console").appendChild(msg);
+}
+
 function createSimulation(graphs) {
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
@@ -95,4 +101,6 @@ document.addEventListener("DOMContentLoaded", function(){
     // Create a d3 chart of graphs
     const simulation = createSimulation([graphA6, graphB6]);
     createDragHandlers(simulation, "g > circle");
+
+    println("Welcome to my little graph isomorphism tester!");
 });
