@@ -1,3 +1,51 @@
+function permute(vs) {
+    if (vs.length == 0) {
+        return [[]];
+    }
+    const permutations = [];
+    for (let i = 0; i < vs.length; i++) {
+        var rest = [...vs.slice(0, i), ...vs.slice(i+1)];
+        for (const perm of permute(rest)) {
+            permutations.push([vs[i], ...perm]);
+        }
+    }
+    return permutations;
+}
+
+function mapKeysToValues(keys, values) {
+    const map = new Map();
+    for (var i = 0; i < keys.length; i++) {
+        map.set(keys[i], values[i]);
+    }
+    return map;
+}
+
+/**
+ * Return every possible mapping of elements in one list to elements in
+ * another
+ * @param {Array} vs 
+ * @param {Array} us 
+ * @return {Array|Map}
+ */
+function mappings(vs, us) {
+    const ms = new Array();
+    for (const v of permute(vs)) {
+        ms.push(new mapKeysToValues(v, us));
+    }
+    return ms;
+}
+
+function allMapToAny(mapping, vs, us) {
+    for (const v of vs) {
+        if (!us.includes(mapping.get(v))) {
+            return false;
+        }
+    }
+
+    // If false was not returned above, then all v in vs map to something in us
+    return true;
+}
+
 class SimpleGraph {
     vertices = [];
     edges = [];
@@ -24,8 +72,8 @@ class SimpleGraph {
         var ls = new Array();
         this.edges.forEach(edge => {
             ls.push({
-                source: this.vertices[edge[0]],
-                target: this.vertices[edge[1]]
+                source: edge[0],
+                target: edge[1]
             });
         });
         return ls;
@@ -75,8 +123,8 @@ class SimpleGraph {
      */
     degree(v) {
         var degreeCount = 0;
-        for (let e = 0; e < this.countEdges(); e++) {
-            if (this.edges[e].includes(v))
+        for (var e of this.edges) {
+            if (e.includes(v))
                 degreeCount++;
         }
         return degreeCount;
@@ -98,8 +146,8 @@ class SimpleGraph {
 
     /**
      * Get all of a vertex's neighbors
-     * @param {number} v
-     * @returns {(number|Array)}
+     * @param {*} v
+     * @returns {(|Array)}
      */
     neighbors(v) {
         var ns = Array();
@@ -118,6 +166,106 @@ class SimpleGraph {
      * @returns {boolean}
      */
     isIsomorphicWith(graph) {
+        for (const mapping of mappings(this.vertices, graph.vertices)) {
+            var allVertsMap = true;
+            for (const [v, u] of mapping){
+                const vNeighbors = this.neighbors(v);
+                const uNeighbors = graph.neighbors(u);
+
+                // Break the loop and go to the next mapping set unless the
+                // number of neighbors match
+                if (vNeighbors.length != uNeighbors.length) {
+                    allVertsMap = false;
+                    break;
+                }
+            
+                // Check if all v's neighbors map to any of u's neighbors
+                if (!allMapToAny(mapping, vNeighbors, uNeighbors)) {
+                    allVertsMap = false;
+                    break;
+                }
+            }
+
+            // If all vertices map, we have a complete mapping, and the graphs
+            // are isomorphic
+            if (allVertsMap) {
+                return true;
+            }
+        }
+        
+        // If we got here, no mapping matched
         return false;
     }
 }
+
+const graphA1 = new SimpleGraph(
+    ['A', 'B', 'C'],
+    [['A', 'B'], ['B', 'C'], ['C', 'A']],
+"A");
+
+const graphB1 = new SimpleGraph(
+    ['X', 'Y', 'Z'],
+    [['X', 'Y'], ['Y', 'Z'], ['Z', 'X']],
+"B");
+
+console.assert(graphA1.isIsomorphicWith(graphB1), 'Pair 1 should be isomorphic');
+
+const graphA2 = new SimpleGraph(
+    ['A', 'B', 'C', 'D'],
+    [['A', 'B'], ['B', 'C'], ['C', 'D']],
+"A");
+
+const graphB2 = new SimpleGraph(
+    ['W', 'X', 'Y', 'Z'],
+    [['W', 'X'], ['X', 'Y'], ['Y', 'Z'], ['Z', 'W']],
+"B");
+
+console.assert(!graphA2.isIsomorphicWith(graphB2), 'Pair 2 should not be isomorphic');
+
+const graphA3 = new SimpleGraph(
+    ['A', 'B', 'C', 'D'],
+    [['A', 'B'], ['B', 'C'], ['C', 'D'], ['D', 'A']],
+"A");
+
+const graphB3 = new SimpleGraph(
+    ['W', 'X', 'Y', 'Z'],
+    [['W', 'X'], ['X', 'Y'], ['Y', 'Z'], ['Z', 'W']],
+"B");
+
+console.assert(graphA3.isIsomorphicWith(graphB3), 'Pair 3 should be isomorphic');
+
+const graphA4 = new SimpleGraph(
+    ['A', 'B', 'C', 'D', 'E'],
+    [['A', 'B'], ['B', 'C'], ['C', 'D'], ['D', 'E']],
+"A");
+
+const graphB4 = new SimpleGraph(
+    ['P', 'Q', 'R', 'S', 'T'],
+    [['P', 'Q'], ['Q', 'R'], ['R', 'S'], ['S', 'T'], ['T', 'P']],
+"B");
+
+console.assert(!graphA4.isIsomorphicWith(graphB4), 'Pair 4 should not be isomorphic');
+
+const graphA5 = new SimpleGraph(
+    ['A', 'B', 'C', 'D'],
+    [['A', 'B'], ['A', 'C'], ['A', 'D']],
+"A");
+
+const graphB5 = new SimpleGraph(
+    ['X', 'Y', 'Z', 'W'],
+    [['X', 'Y'], ['X', 'Z'], ['X', 'W']],
+"B");
+
+console.assert(graphA5.isIsomorphicWith(graphB5), 'Pair 5 should be isomorphic');
+
+const graphA6 = new SimpleGraph(
+    ['A', 'B', 'C'],
+    [['A', 'B'], ['B', 'C']],
+"A");
+
+const graphB6 = new SimpleGraph(
+    ['X', 'Y', 'Z'],
+    [['X', 'Y'], ['Y', 'Z'], ['Z', 'X']],
+"B");
+
+console.assert(!graphA6.isIsomorphicWith(graphB6), 'Pair 6 should not be isomorphic');

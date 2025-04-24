@@ -92,26 +92,7 @@ function createDragHandlers(simulation, selector) {
 }
 
 document.addEventListener("DOMContentLoaded", function(){
-    // Generate example graphs
-    const graph1 = new SimpleGraph(['V0', 'V1', 'V2', 'V3', 'V4'], [
-        [0, 1],
-        [0, 2],
-        [1, 2],
-        [2, 3],
-        [1, 3],
-        [3, 4]
-    ], "G");
-
-    const graph2 = new SimpleGraph(['U0', 'U1', 'U2', 'U3', 'U4'], [
-        [0, 1],
-        [1, 2],
-        [2, 3],
-        [1, 3],
-        [3, 4],
-        [1, 4]
-    ], "H");
-
     // Create a d3 chart of graphs
-    const simulation = createSimulation([graph1, graph2]);
+    const simulation = createSimulation([graphA6, graphB6]);
     createDragHandlers(simulation, "g > circle");
 });
