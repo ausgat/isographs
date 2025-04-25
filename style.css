@@ -69,12 +69,14 @@ p {
 .subpanel {
   background-color: #ddd;
   border-radius: 4px;
-  margin: 8px;
+  margin: 8px 0;
   padding: 10px;
 }
 
 table {
   width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 #chart {

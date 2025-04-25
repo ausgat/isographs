@@ -119,7 +119,7 @@ function createTable(cols, rows, tableName, prefix) {
                 if (c > 0) {
                     header.innerText = prefix + (c-1);
                 } else {
-                    header.innerText = "Links";
+                    header.innerText = "🔗";
                 }
                 rowtr.appendChild(header);
                 thead.appendChild(rowtr);

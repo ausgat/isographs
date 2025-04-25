@@ -11,24 +11,18 @@
   <body>
     <div class="wrapper">
       <div id="sidebar" class="panel">
-        <div id="graphform1" class="subpanel">
-          <label for="vertnum">Number of Vertices</label>
-          <select name="vertnum" id="vertnum" class="ui">
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-          </select>
-          <table id="atable"></table>
-          <table id="btable"></table>
-          <button id="generate">Generate</button>
-        </div>
-        <div id="graphtests" class="subpanel">
-          <button>Check Simple</button>
-          <button>Check Counts</button>
-          <button id="checkiso">Check Isomorphic</button>
-        </div>
+        <label for="vertnum">Number of Vertices</label>
+        <select name="vertnum" id="vertnum" class="ui">
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+        </select>
+        <table id="atable" class="subpanel"></table>
+        <table id="btable" class="subpanel"></table>
+        <button id="generate">Generate</button>
+        <button id="checkiso">Check Isomorphic</button>
       </div>
       <div id="chart"></div>
       <div id="console" class="panel"></div>
