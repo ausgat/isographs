@@ -79,6 +79,10 @@ table {
   padding: 0;
 }
 
+table td {
+  text-align: center;
+}
+
 #chart {
   display: flex;
   overflow: hidden;
