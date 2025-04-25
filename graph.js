@@ -160,12 +160,7 @@ class SimpleGraph {
         return ns;
     }
 
-    /**
-     * Check if this graph is isomorphic with another graph
-     * @param {SimpleGraph} graph 
-     * @returns {boolean}
-     */
-    isIsomorphicWith(graph) {
+    isomorphism(graph) {
         for (const mapping of mappings(this.vertices, graph.vertices)) {
             var allVertsMap = true;
             for (const [v, u] of mapping){
@@ -189,12 +184,26 @@ class SimpleGraph {
             // If all vertices map, we have a complete mapping, and the graphs
             // are isomorphic
             if (allVertsMap) {
-                return true;
+                return mapping;
             }
         }
         
         // If we got here, no mapping matched
-        return false;
+        return null;
+
+    }
+
+    /**
+     * Check if this graph is isomorphic with another graph
+     * @param {SimpleGraph} graph 
+     * @returns {boolean}
+     */
+    isIsomorphicWith(graph) {
+        const mapping = this.isomorphism(graph);
+        if (mapping != null)
+            return true;
+        else
+            return false;
     }
 }
 

@@ -215,8 +215,14 @@ document.addEventListener("DOMContentLoaded", function(){
     const isoButton = document.getElementById("checkiso");
     isoButton.addEventListener("click", (ev) => {
         if (graphA && graphB) {
-            if (graphA.isIsomorphicWith(graphB)) {
-                println("Graphs A and B are <b>isomorphic</b>!");
+            const mapping = graphA.isomorphism(graphB);
+            if (mapping != null) {
+                var mapStrs = [];
+                for (var [source, target] of mapping) {
+                    mapStrs.push(source + " → " + target);
+                }
+                println("Graphs A and B are <b>isomorphic</b> with mapping: " +
+                    mapStrs.join(", "));
             } else {
                 println("Graphs A and B are <b>not isomorphic</b>!");
             }
