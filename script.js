@@ -4,6 +4,9 @@ const height = 400;
 var graphA = null;
 var graphB = null;
 
+var simulation = null;
+var isoFound = false;
+
 function println(str) {
     const console = document.getElementById("console");
     const msg = document.createElement("p");
@@ -194,7 +197,7 @@ function generateGraphs() {
             }
         }
     }
-    const simulation = createSimulation([graphA, graphB]);
+    simulation = createSimulation([graphA, graphB]);
     createDragHandlers(simulation, "g > circle");
 }
 
@@ -210,6 +213,7 @@ document.addEventListener("DOMContentLoaded", function(){
     genButton.addEventListener("click", (ev) => {
         d3.select("svg").remove();
         generateGraphs();
+        isoFound = false;
     });
 
     const isoButton = document.getElementById("checkiso");
@@ -223,6 +227,18 @@ document.addEventListener("DOMContentLoaded", function(){
                 }
                 println("Graphs A and B are <b>isomorphic</b> with mapping: " +
                     mapStrs.join(", "));
+
+                // Add new physics links
+                if (simulation != null && !isoFound) {
+                    const links = [];
+                    for (var [source, target] of mapping) {
+                        links.push({source: source, target: target});
+                    }
+                    simulation.force("link", d3.forceLink(links).id(d => d.id)
+                            .distance(10))
+                        .alpha(0.3);
+                    isoFound = true; // So we don't make too many links
+                }
             } else {
                 println("Graphs A and B are <b>not isomorphic</b>!");
             }
