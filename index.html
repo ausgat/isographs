@@ -12,20 +12,22 @@
     <div class="wrapper">
       <div id="sidebar" class="panel">
         <div id="graphform1" class="subpanel">
-          <label for="graphverts1">Graph 1 Vertices:</label>
-          <input type="text" name="graphverts1" id="graphverts1">
-          <label for="graphedges1">Graph 1 Edges:</label>
-          <input type="text" name="graphedges1" id="graphedges1">
-          <label for="graphverts2">Graph 2 Vertices:</label>
-          <input type="text" name="graphverts2" id="graphverts1">
-          <label for="graphedges2">Graph 2 Edges:</label>
-          <input type="text" name="graphedges2" id="graphedges2">
-          <button>Generate</button>
+          <label for="vertnum">Number of Vertices</label>
+          <select name="vertnum" id="vertnum" class="ui">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+          <table id="atable"></table>
+          <table id="btable"></table>
+          <button id="generate">Generate</button>
         </div>
         <div id="graphtests" class="subpanel">
           <button>Check Simple</button>
           <button>Check Counts</button>
-          <button>Check Isomorphic</button>
+          <button id="checkiso">Check Isomorphic</button>
         </div>
       </div>
       <div id="chart"></div>

@@ -1,6 +1,9 @@
 const width = 600;
 const height = 400;
 
+var graphA = null;
+var graphB = null;
+
 function println(str) {
     const msg = document.createElement("p");
     msg.innerHTML = str;
@@ -97,10 +100,126 @@ function createDragHandlers(simulation, selector) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", function(){
-    // Create a d3 chart of graphs
-    const simulation = createSimulation([graphA6, graphB6]);
+function createTable(cols, rows, tableName, prefix) {
+    const table = document.getElementById(tableName);
+    table.innerHTML = "";
+
+    const thead = document.createElement("thead")
+    table.appendChild(thead);
+    const tbody = document.createElement("tbody");
+    table.appendChild(tbody);
+    
+    for (var r = 0; r < rows + 1; r++) {
+        const rowtr = document.createElement("tr");
+        for (var c = 0; c < cols + 1; c++) {
+            // Build the headers
+            if (r == 0) {
+                const header = document.createElement("th");
+                header.setAttribute("scope", "col");
+                if (c > 0) {
+                    header.innerText = prefix + (c-1);
+                } else {
+                    header.innerText = "Links";
+                }
+                rowtr.appendChild(header);
+                thead.appendChild(rowtr);
+
+            // Build the rows
+            } else {
+                if (c == 0) {
+                    // Build the left-headers
+                    const header = document.createElement("th");
+                    header.setAttribute("scope", "row");
+                    header.innerText = prefix + (r-1);
+                    rowtr.appendChild(header);
+
+                } else {
+                    // Build the checkboxes
+                    const cell = document.createElement("td");
+                    const checkbox = document.createElement("input");
+                    checkbox.setAttribute("type", "checkbox");
+
+                    const name = prefix + (r-1) + "_" + prefix + (c-1);
+                    const reverseName = prefix + (c-1) + "_" + prefix + (r-1);
+                    checkbox.setAttribute("name", name);
+                    checkbox.setAttribute("id", name);
+                    if (document.getElementById(reverseName) == null)
+                        checkbox.classList.add("linkbox");
+                    if (r == c)
+                        checkbox.disabled = true;
+
+                    // Add an event listener for when the checkbox value is
+                    // changed
+                    checkbox.addEventListener("change", (ev) => {
+                        const otherCheckbox =
+                            document.getElementById(reverseName);
+                        otherCheckbox.checked = ev.target.checked;
+                    });
+
+                    cell.appendChild(checkbox);
+                    rowtr.appendChild(cell);
+                }
+                tbody.appendChild(rowtr);
+            }
+        }
+    }
+}
+
+function createTables(rowsAndCols) {
+    const num = Number(rowsAndCols);
+    createTable(num, num, "atable", "A");
+    createTable(num, num, "btable", "B");
+}
+
+function generateGraphs() {
+    const num = Number(document.getElementById("vertnum").value);
+    graphA = new SimpleGraph([], [], "A");
+    graphB = new SimpleGraph([], [], "B");
+
+    // Fill in the vertices
+    for (let n = 0; n < num; n++) {
+        graphA.vertices.push("A" + n);
+        graphB.vertices.push("B" + n);
+    }
+
+    for (var checkbox of document.getElementsByClassName("linkbox")) {
+        const [source, target] = checkbox.id.split("_");
+        if (checkbox.checked) {
+            if (source[0] == "A") {
+                graphA.edges.push([source, target]);
+            } else if (source[0] == "B") {
+                graphB.edges.push([source, target]);
+            }
+        }
+    }
+    const simulation = createSimulation([graphA, graphB]);
     createDragHandlers(simulation, "g > circle");
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+    const vertNumCombo = document.getElementById("vertnum");
+    createTables(Number(vertNumCombo.value));
+    vertNumCombo.addEventListener("change", (ev) => {
+        const num = Number(ev.target.value);
+        createTables(num);
+    })
+
+    const genButton = document.getElementById("generate");
+    genButton.addEventListener("click", (ev) => {
+        d3.select("svg").remove();
+        generateGraphs();
+    });
+
+    const isoButton = document.getElementById("checkiso");
+    isoButton.addEventListener("click", (ev) => {
+        if (graphA && graphB) {
+            if (graphA.isIsomorphicWith(graphB)) {
+                println("Graphs A and B are <b>isomorphic</b>!");
+            } else {
+                println("Graphs A and B are <b>not isomorphic</b>!");
+            }
+        }
+    });
 
     println("Welcome to my little graph isomorphism tester!");
 });

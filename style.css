@@ -62,11 +62,19 @@ p {
   color: #555;
 }
 
+.panel .ui {
+  margin: 5px 0;
+}
+
 .subpanel {
   background-color: #ddd;
   border-radius: 4px;
   margin: 8px;
   padding: 10px;
+}
+
+table {
+  width: 100%;
 }
 
 #chart {
