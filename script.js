@@ -5,9 +5,11 @@ var graphA = null;
 var graphB = null;
 
 function println(str) {
+    const console = document.getElementById("console");
     const msg = document.createElement("p");
     msg.innerHTML = str;
-    document.getElementById("console").appendChild(msg);
+    console.appendChild(msg);
+    console.scrollTop = console.scrollHeight;
 }
 
 function createSimulation(graphs) {

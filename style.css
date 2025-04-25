@@ -94,6 +94,7 @@ table {
 }
 
 #console {
+  overflow: scroll;
 }
 
 .labels text {
