@@ -1,62 +1,107 @@
-function permute(vs) {
-    if (vs.length == 0) {
-        return [[]];
-    }
-    const permutations = [];
-    for (let i = 0; i < vs.length; i++) {
-        var rest = [...vs.slice(0, i), ...vs.slice(i+1)];
-        for (const perm of permute(rest)) {
-            permutations.push([vs[i], ...perm]);
-        }
-    }
-    return permutations;
-}
-
-function mapKeysToValues(keys, values) {
-    const map = new Map();
-    for (var i = 0; i < keys.length; i++) {
-        map.set(keys[i], values[i]);
-    }
-    return map;
-}
-
 /**
- * Return every possible mapping of elements in one list to elements in
- * another
- * @param {Array} vs 
- * @param {Array} us 
- * @return {Array|Map}
+ * A class representing a simple graph
  */
-function mappings(vs, us) {
-    const ms = new Array();
-    for (const v of permute(vs)) {
-        ms.push(new mapKeysToValues(v, us));
-    }
-    return ms;
-}
-
-function allMapToAny(mapping, vs, us) {
-    for (const v of vs) {
-        if (!us.includes(mapping.get(v))) {
-            return false;
-        }
-    }
-
-    // If false was not returned above, then all v in vs map to something in us
-    return true;
-}
-
 class SimpleGraph {
+    /**
+     * Compute all possible permutations of an array
+     * @param {Array} vs Array to permute
+     * @returns {(Array|Array)} Array of arrays of each permutation
+     */
+    static permute(vs) {
+        if (vs.length == 0) {
+            return [[]];
+        }
+        const permutations = [];
+        for (let i = 0; i < vs.length; i++) {
+            var rest = [...vs.slice(0, i), ...vs.slice(i+1)];
+            for (const perm of this.permute(rest)) {
+                permutations.push([vs[i], ...perm]);
+            }
+        }
+        return permutations;
+    }
+
+    /**
+     * Create a Map by matching keys from one Array with values at the same
+     * indices in another Array
+     * @param {Array} keys An array of keys
+     * @param {Array} values An array of values
+     * @returns {Map}
+     */
+    static mapKeysToValues(keys, values) {
+        const map = new Map();
+        for (var i = 0; i < keys.length; i++) {
+            map.set(keys[i], values[i]);
+        }
+        return map;
+    }
+
+    /**
+     * Return every possible mapping of elements in one list to elements in
+     * another
+     * @param {Array} vs 
+     * @param {Array} us 
+     * @return {Array|Map}
+     */
+    static mappings(vs, us) {
+        const ms = new Array();
+        for (const perm of SimpleGraph.permute(vs)) {
+            ms.push(SimpleGraph.mapKeysToValues(perm, us));
+        }
+        return ms;
+    }
+
+    /**
+     * Check if every node in one array maps to any node in another
+     * @param {Map} mapping The mapping to check
+     * @param {Array} vs Nodes from first graph
+     * @param {Array} us Nodes from second graph
+     * @returns {boolean}
+     */
+    static allMapToAny(mapping, vs, us) {
+        for (const v of vs) {
+            if (!us.includes(mapping.get(v))) {
+                return false;
+            }
+        }
+
+        // If false was not returned above, then all v in vs map to something in
+        // us
+        return true;
+    }
+
+    /**
+     * @type {Array} vertices The list of vertices (nodes) in the graph.
+     */
     vertices = [];
+
+    /**
+     * @type {Array} edges The list of edges (connections) in the graph, where
+     * each edge is represented as a pair of vertices.
+     */
     edges = [];
+
+    /**
+     * @type {string} group The group or category the graph belongs to.
+     */
     group = "";
 
+    /**
+     * Create a new SimpleGraph with vertices, edges, and graph group
+     * @param {Array} vertices Vertices of the graph
+     * @param {Array} edges Edges of the graph
+     * @param {String} group Group the graph belongs to
+     */
     constructor(vertices, edges, group) {
         this.vertices = vertices;
         this.edges = edges;
         this.group = group;
     }
 
+    /**
+     * Return vertices as nodes compatible with d3-force
+     * @return {Array}
+     */
     get nodes() {
         var ns = new Array();
         this.vertices.forEach(vert => {
@@ -68,6 +113,10 @@ class SimpleGraph {
         return ns;
     }
 
+    /**
+     * Return edges as links compatible with d3-force
+     * @return {Array}
+     */
     get links() {
         var ls = new Array();
         this.edges.forEach(edge => {
@@ -147,7 +196,7 @@ class SimpleGraph {
     /**
      * Get all of a vertex's neighbors
      * @param {*} v
-     * @returns {(|Array)}
+     * @returns {Array}
      */
     neighbors(v) {
         var ns = Array();
@@ -160,8 +209,14 @@ class SimpleGraph {
         return ns;
     }
 
+    /**
+     * Check for isomorphisms between two graphs and return the first one
+     * @param {SimpleGraph} graph The other graph to check this one against
+     * @returns The first mapping that proves there's an isomorphism
+     */
     isomorphism(graph) {
-        for (const mapping of mappings(this.vertices, graph.vertices)) {
+        for (const mapping of SimpleGraph.mappings(this.vertices,
+                graph.vertices)) {
             var allVertsMap = true;
             for (const [v, u] of mapping){
                 const vNeighbors = this.neighbors(v);
@@ -175,7 +230,7 @@ class SimpleGraph {
                 }
             
                 // Check if all v's neighbors map to any of u's neighbors
-                if (!allMapToAny(mapping, vNeighbors, uNeighbors)) {
+                if (!SimpleGraph.allMapToAny(mapping, vNeighbors, uNeighbors)) {
                     allVertsMap = false;
                     break;
                 }
@@ -207,6 +262,8 @@ class SimpleGraph {
     }
 }
 
+// Graph tests
+
 const graphA1 = new SimpleGraph(
     ['A', 'B', 'C'],
     [['A', 'B'], ['B', 'C'], ['C', 'A']],
@@ -217,7 +274,8 @@ const graphB1 = new SimpleGraph(
     [['X', 'Y'], ['Y', 'Z'], ['Z', 'X']],
 "B");
 
-console.assert(graphA1.isIsomorphicWith(graphB1), 'Pair 1 should be isomorphic');
+console.assert(graphA1.isIsomorphicWith(graphB1),
+    'Pair 1 should be isomorphic');
 
 const graphA2 = new SimpleGraph(
     ['A', 'B', 'C', 'D'],
@@ -229,7 +287,8 @@ const graphB2 = new SimpleGraph(
     [['W', 'X'], ['X', 'Y'], ['Y', 'Z'], ['Z', 'W']],
 "B");
 
-console.assert(!graphA2.isIsomorphicWith(graphB2), 'Pair 2 should not be isomorphic');
+console.assert(!graphA2.isIsomorphicWith(graphB2),
+    'Pair 2 should not be isomorphic');
 
 const graphA3 = new SimpleGraph(
     ['A', 'B', 'C', 'D'],
@@ -241,7 +300,8 @@ const graphB3 = new SimpleGraph(
     [['W', 'X'], ['X', 'Y'], ['Y', 'Z'], ['Z', 'W']],
 "B");
 
-console.assert(graphA3.isIsomorphicWith(graphB3), 'Pair 3 should be isomorphic');
+console.assert(graphA3.isIsomorphicWith(graphB3),
+    'Pair 3 should be isomorphic');
 
 const graphA4 = new SimpleGraph(
     ['A', 'B', 'C', 'D', 'E'],
@@ -253,7 +313,8 @@ const graphB4 = new SimpleGraph(
     [['P', 'Q'], ['Q', 'R'], ['R', 'S'], ['S', 'T'], ['T', 'P']],
 "B");
 
-console.assert(!graphA4.isIsomorphicWith(graphB4), 'Pair 4 should not be isomorphic');
+console.assert(!graphA4.isIsomorphicWith(graphB4),
+    'Pair 4 should not be isomorphic');
 
 const graphA5 = new SimpleGraph(
     ['A', 'B', 'C', 'D'],
@@ -265,7 +326,8 @@ const graphB5 = new SimpleGraph(
     [['X', 'Y'], ['X', 'Z'], ['X', 'W']],
 "B");
 
-console.assert(graphA5.isIsomorphicWith(graphB5), 'Pair 5 should be isomorphic');
+console.assert(graphA5.isIsomorphicWith(graphB5),
+    'Pair 5 should be isomorphic');
 
 const graphA6 = new SimpleGraph(
     ['A', 'B', 'C'],
@@ -277,4 +339,5 @@ const graphB6 = new SimpleGraph(
     [['X', 'Y'], ['Y', 'Z'], ['Z', 'X']],
 "B");
 
-console.assert(!graphA6.isIsomorphicWith(graphB6), 'Pair 6 should not be isomorphic');
+console.assert(!graphA6.isIsomorphicWith(graphB6),
+    'Pair 6 should not be isomorphic');

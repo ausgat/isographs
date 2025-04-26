@@ -7,6 +7,10 @@ var graphB = null;
 var simulation = null;
 var isoFound = false;
 
+/**
+ * Print a string to the console in a p tag
+ * @param {String} str String to print
+ */
 function println(str) {
     const console = document.getElementById("console");
     const msg = document.createElement("p");
@@ -15,6 +19,11 @@ function println(str) {
     console.scrollTop = console.scrollHeight;
 }
 
+/**
+ * Create a d3-force simulation with the given graphs
+ * @param {(SimpleGraph|Array)} graphs Graphs to generate
+ * @returns Return a d3-force simulation object
+ */
 function createSimulation(graphs) {
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
@@ -59,7 +68,8 @@ function createSimulation(graphs) {
         .selectAll("text")
         .data(nodes)
         .join("text")
-        .text(d => d.id);
+        .text(d => d.id)
+        .attr("alignment-baseline", "middle");
 
     simulation.on("tick", () => {
         link
@@ -78,7 +88,11 @@ function createSimulation(graphs) {
     return simulation;
 }
 
-// Set up drag handling code
+/**
+ * Set up drag handling code for a simulation
+ * @param {*} The d3-force simulation
+ * @param {string} HTML selector
+ */
 function createDragHandlers(simulation, selector) {
     d3.selectAll(selector).call(d3.drag()
             .on("start", dragstarted)
@@ -105,6 +119,13 @@ function createDragHandlers(simulation, selector) {
     }
 }
 
+/**
+ * Create an interactive adjacency matrix table with checkboxes
+ * @param {number} cols Number of columns
+ * @param {number} rows Number of rows
+ * @param {string} tableName Name of the table
+ * @param {string} prefix Prefix for the node names
+ */
 function createTable(cols, rows, tableName, prefix) {
     const table = document.getElementById(tableName);
     table.innerHTML = "";
@@ -170,12 +191,19 @@ function createTable(cols, rows, tableName, prefix) {
     }
 }
 
+/**
+ * Create the tables for the adjacency matrix checkboxes
+ * @param {number} rowsAndCols Number of rows and columns
+ */
 function createTables(rowsAndCols) {
     const num = Number(rowsAndCols);
     createTable(num, num, "atable", "A");
     createTable(num, num, "btable", "B");
 }
 
+/**
+ * Generate the graphs and simulation to go with it in d3.js
+ */
 function generateGraphs() {
     const num = Number(document.getElementById("vertnum").value);
     graphA = new SimpleGraph([], [], "A");
@@ -201,14 +229,18 @@ function generateGraphs() {
     createDragHandlers(simulation, "g > circle");
 }
 
+// Run this code when the page loads
 document.addEventListener("DOMContentLoaded", function(){
     const vertNumCombo = document.getElementById("vertnum");
+    
+    // Create the initial tables
     createTables(Number(vertNumCombo.value));
     vertNumCombo.addEventListener("change", (ev) => {
         const num = Number(ev.target.value);
         createTables(num);
     })
 
+    // Event handler for generate button
     const genButton = document.getElementById("generate");
     genButton.addEventListener("click", (ev) => {
         d3.select("svg").remove();
@@ -216,6 +248,7 @@ document.addEventListener("DOMContentLoaded", function(){
         isoFound = false;
     });
 
+    // Event handler for check isomorphism button
     const isoButton = document.getElementById("checkiso");
     isoButton.addEventListener("click", (ev) => {
         if (graphA && graphB) {
@@ -236,7 +269,7 @@ document.addEventListener("DOMContentLoaded", function(){
                     }
                     simulation.force("link", d3.forceLink(links).id(d => d.id)
                             .distance(10))
-                        .alpha(0.3);
+                        .alpha(0.3).restart();
                     isoFound = true; // So we don't make too many links
                 }
             } else {
