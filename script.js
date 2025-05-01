@@ -7,6 +7,8 @@ var graphB = null;
 var simulation = null;
 var isoFound = false;
 
+var alreadyWarned = false;
+
 /**
  * Print a string to the console in a p tag
  * @param {String} str String to print
@@ -233,10 +235,16 @@ function generateGraphs() {
 document.addEventListener("DOMContentLoaded", function(){
     const vertNumCombo = document.getElementById("vertnum");
     
-    // Create the initial tables
+    // Create the initial tables and an event listener to generate new tables
+    // when the table size combo box changes
     createTables(Number(vertNumCombo.value));
     vertNumCombo.addEventListener("change", (ev) => {
         const num = Number(ev.target.value);
+        if (num > 6 && !alreadyWarned) {
+            println("📝 Note: Things might get slower when graphs have more " +
+                "than 6 vertices.");
+            alreadyWarned = true;
+        }
         createTables(num);
     })
 
